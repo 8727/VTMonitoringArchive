@@ -22,7 +22,7 @@ namespace VTMonitoringArchive
         public static string sortingFolderSc = "D:\\!Doris";
 
         public static bool sortingViolations = true;
-        public static int storageDays = 30;
+        public static int storageDays = 35;
         public static int storageSortingIntervalMinutes = 20;
         public static bool storageXML = true;
         public static bool storageСollage = false;
@@ -93,8 +93,8 @@ namespace VTMonitoringArchive
             StatusJson.Add("DiskPercentTotalSize", Request.GetDiskUsagePercentage().ToString());
             StatusJson.Add("DiskPercentTotalFreeSpace", Request.GetDiskPercentFreeSpace().ToString());
 
-            //StatusJson.Add("ArchiveDepthSeconds", SqlLite.ArchiveDepthSeconds());
-            //StatusJson.Add("ArchiveDepthCount", SqlLite.ArchiveDepthCount());
+            StatusJson.Add("ArchiveDepthSeconds", SQL.ArchiveDepthSeconds());
+            StatusJson.Add("ArchiveDepthCount", SQL.ArchiveDepthCount());
 
             string[] network = Request.GetNetwork();
             StatusJson.Add("NetworkNetspeed", network[0]);

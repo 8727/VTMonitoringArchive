@@ -20,10 +20,10 @@ namespace VTMonitoringArchive
             Logs.WriteLine($"Total disk size {Service.StatusJson["DiskTotalSize"]} GB, free space size {Service.StatusJson["DiskTotalFreeSpace"]} GB, disk size as a percentage {Service.StatusJson["DiskPercentSize"]}, free disk space percentage {Service.StatusJson["DiskPercentFreeSpace"]}.");
             //-------------------------------------------------------------------------------------------------
 
-            //Service.StatusJson["ArchiveDepthSeconds"] = SqlLite.ArchiveDepthSeconds();
-            //Service.StatusJson["ArchiveDepthCount"] = SqlLite.ArchiveDepthCount();
-            //TimeSpan depthSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["ArchiveDepthSeconds"]));
-            //Logs.WriteLine($"Storage depth: time {depthSeconds}, number {Service.StatusJson["ArchiveDepthCount"]}.");
+            Service.StatusJson["ArchiveDepthSeconds"] = SQL.ArchiveDepthSeconds();
+            Service.StatusJson["ArchiveDepthCount"] = SQL.ArchiveDepthCount();
+            TimeSpan depthSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["ArchiveDepthSeconds"]));
+            Logs.WriteLine($"Storage depth: time {depthSeconds}, number {Service.StatusJson["ArchiveDepthCount"]}.");
             //-------------------------------------------------------------------------------------------------
 
             string[] network = Request.GetNetwork();
