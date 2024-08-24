@@ -41,7 +41,7 @@ namespace VTMonitoringArchive
             {
                 dt = "01.01.2000 00:00:00";
             }
-            if (dt == null)
+            if (dt == "-2")
             {
                 dt = DateTime.UtcNow.ToString("d.M.yyyy HH:mm:ss");
             }
@@ -53,7 +53,8 @@ namespace VTMonitoringArchive
         public static UInt32 LastReplicationSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS ORDER BY CARS_ID DESC";
-            return DateTimeToSecondes(SQLQuery(sqlQuery).ToString());
+            object response = SQLQuery(sqlQuery) ?? "-2";
+            return DateTimeToSecondes(response.ToString());
         }
 
         public static UInt32 UnprocessedViolationsCount()
@@ -65,7 +66,8 @@ namespace VTMonitoringArchive
         public static UInt32 UnprocessedViolationsSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS where PROCESSED = 0";
-            return DateTimeToSecondes(SQLQuery(sqlQuery).ToString());
+            object response = SQLQuery(sqlQuery) ?? "-2";
+            return DateTimeToSecondes(response.ToString());
         }
 
         public static UInt32 UnexportedCount()
@@ -77,7 +79,8 @@ namespace VTMonitoringArchive
         public static UInt32 UnexportedSeconds()
         {
             string sqlQuery = $"SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS_VIOLATIONS where {Service.monitoringOfUnloadings} = 1 ORDER BY CARS_ID DESC";
-            return DateTimeToSecondes(SQLQuery(sqlQuery).ToString());
+            object response = SQLQuery(sqlQuery) ?? "-2";
+            return DateTimeToSecondes(response.ToString());
         }
 
         public static string ArchiveDepthSeconds()
