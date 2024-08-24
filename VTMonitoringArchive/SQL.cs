@@ -115,8 +115,8 @@ namespace VTMonitoringArchive
 
         public static string Yesterday(string alarm)
         {
-            String getDateTime = DateTime.UtcNow.ToString("d.M.yyyy 00:00:00");
-            DateTime endDateTime = DateTime.ParseExact(getDateTime, "d.M.yyyy H:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+            String getDateTime = DateTime.Now.ToString("d.M.yyyy 00:00:00");
+            DateTime endDateTime = DateTime.ParseExact(getDateTime, "d.M.yyyy H:mm:ss", System.Globalization.CultureInfo.InvariantCulture).Add(-Service.localZone);
             DateTime startDateTime = endDateTime.AddDays(-1);
 
             string sqlQuery = $"SELECT COUNT_BIG(CARS_ID) FROM AVTO.dbo.CARS_VIOLATIONS WHERE {alarm} = 1 AND CHECKTIME > '{startDateTime:s}' AND CHECKTIME < '{endDateTime:s}'";
