@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.ServiceProcess;
 
 
 namespace VTMonitoringArchive
@@ -11,6 +12,44 @@ namespace VTMonitoringArchive
     internal class Request
     {
         static DriveInfo driveInfo = new DriveInfo(Service.diskMonitoring);
+
+        public static void ReStartService(string serviceName)
+        {
+            ServiceController service = new ServiceController(serviceName);
+            if (service.Status != ServiceControllerStatus.Stopped)
+            {
+                service.Stop();
+                service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMinutes(10));
+                if (service.Status != ServiceControllerStatus.StopPending)
+                {
+                    foreach (var process in Process.GetProcessesByName(serviceName))
+                    {
+                        process.Kill();
+                        Logs.WriteLine($"********** Service {serviceName} KIILL **********");
+                    }
+                }
+            }
+            Logs.WriteLine($">>>> Service {serviceName} status >>>> {service.Status} <<<<");
+
+            Thread.Sleep(5000);
+
+            if (service.Status != ServiceControllerStatus.Running)
+            {
+                service.Start();
+                service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromMinutes(10));
+            }
+            Logs.WriteLine($">>>> Service {serviceName} status >>>> {service.Status} <<<<");
+        }
+
+        public static void RebootHost()
+        {
+            //Logs.WriteLine($"***** Reboot *****");
+            var cmd = new ProcessStartInfo("shutdown.exe", "-r -t 5");
+            cmd.CreateNoWindow = true;
+            cmd.UseShellExecute = false;
+            cmd.ErrorDialog = false;
+            Process.Start(cmd);
+        }
 
         public static byte GetPing(string ip)
         {
@@ -76,7 +115,6 @@ namespace VTMonitoringArchive
             string[] req = { speed.ToString(), ((lastReceived - oldReceived) / 131072.0).ToString(), ((lastSent - oldSent) / 131072.0).ToString() };
             return req;
         }
-
 
     }
 }

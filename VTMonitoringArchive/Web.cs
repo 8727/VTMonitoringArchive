@@ -3,6 +3,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections;
 
 
 namespace VTMonitoringArchive
@@ -45,13 +46,35 @@ namespace VTMonitoringArchive
             json += ",\n\t\"diskPercentTotalSize\":\"" + Service.StatusJson["DiskPercentTotalSize"] + "\"";
             json += ",\n\t\"diskPercentTotalFreeSpace\":\"" + Service.StatusJson["DiskPercentTotalFreeSpace"] + "\"";
 
-            json += ",\n\t\"archiveDepthSeconds\":\"" + Service.StatusJson["ArchiveDepthSeconds"] + "\"";
-            json += ",\n\t\"archiveDepthCount\":\"" + Service.StatusJson["ArchiveDepthCount"] + "\"";
-
             json += ",\n\t\"networkNetspeed\":\"" + Service.StatusJson["NetworkNetspeed"] + "\"";
             json += ",\n\t\"networkSent\":\"" + Service.StatusJson["NetworkSent"] + "\"";
             json += ",\n\t\"networkReceived\":\"" + Service.StatusJson["NetworkReceived"] + "\"";
 
+            json += ",\n\t\"archiveDepthSeconds\":\"" + Service.StatusJson["ArchiveDepthSeconds"] + "\"";
+            json += ",\n\t\"archiveDepthCount\":\"" + Service.StatusJson["ArchiveDepthCount"] + "\"";
+
+            json += ",\n\t\"lastReplicationSeconds\":\"" + Service.StatusJson["LastReplicationSeconds"] + "\"";
+
+            json += ",\n\t\"unprocessedViolationsCount\":\"" + Service.StatusJson["UnprocessedViolationsCount"] + "\"";
+            json += ",\n\t\"unprocessedViolationsSeconds\":\"" + Service.StatusJson["UnprocessedViolationsSeconds"] + "\"";
+
+            json += ",\n\t\"unexportedCount\":\"" + Service.StatusJson["UnexportedCount"] + "\"";
+            json += ",\n\t\"unexportedSeconds\":\"" + Service.StatusJson["UnexportedSeconds"] + "\"";
+
+            json += ",\n\t\"allViolationsPrevioushour\":\"" + Service.StatusJson["AllViolationsPrevioushour"] + "\"";
+
+            json += ",\n\t\"violationsYesterday\":[\n\t";
+            int v = 0;
+            foreach (DictionaryEntry YesterdayKey in Service.Yesterday)
+            {
+                v++;
+                json += "\t{\n\t\t\"violations\":\"" + YesterdayKey.Key + "\",\n\t\t\"quantity\":\"" + YesterdayKey.Value + "\"\n\t\t}";
+                if (v < Service.Yesterday.Count)
+                {
+                    json += ",";
+                }
+            }
+            json += "\n\t]";
 
             json += "\n}";
 

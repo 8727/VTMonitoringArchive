@@ -29,7 +29,7 @@ namespace VTMonitoringArchive
             ViolationCode.Add("134", "134 - SeatBelt_Passanger");
         }
 
-        public static void OnStorageTimer(Object source, ElapsedEventArgs e)
+        public static void OnSortingTimer(Object source, ElapsedEventArgs e)
         {
             SortingFiles(Service.sourceFolderPr, Service.sortingFolderPr);
             SortingFiles(Service.sourceFolderSc, Service.sortingFolderSc);
@@ -42,6 +42,7 @@ namespace VTMonitoringArchive
                 XmlDocument xFile = new XmlDocument();
                 string[] files = Directory.GetFiles(sourcePath, "*.xml", SearchOption.AllDirectories);
                 int countFiles = files.Length;
+                if (countFiles > 0) { Timer.export = false; }
                 foreach (var file in files)
                 {
                     string name = Path.GetFileName(file);
@@ -102,6 +103,7 @@ namespace VTMonitoringArchive
                     }
                 }
                 Logs.WriteLine($">>>>>>>> Sorted {countFiles} violations");
+                Logs.WriteLine("-------------------------------------------------------------------------------");
             }
         }
 
