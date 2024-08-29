@@ -14,7 +14,7 @@ namespace VTMonitoringArchive
         {
             foreach (string violation in Service.violations)
             {
-                Service.Yesterday.Add(violation.Replace(" ", ""), SQL.Yesterday(violation.Replace(" ", "")));
+                Service.Yesterday[violation.Replace(" ", "")] = SQL.Yesterday(violation.Replace(" ", ""));
             }
         }
 

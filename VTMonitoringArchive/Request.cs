@@ -5,6 +5,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.ServiceProcess;
+using System.Data.SqlClient;
 
 
 namespace VTMonitoringArchive
@@ -64,9 +65,8 @@ namespace VTMonitoringArchive
 
         public static UInt32 GetUpTime()
         {
-            PerformanceCounter uptime = new PerformanceCounter("System", "System Up Time");
-            uptime.NextValue();
-            return Convert.ToUInt32(uptime.NextValue());
+            TimeSpan upTime = TimeSpan.FromMilliseconds(Environment.TickCount);
+            return Convert.ToUInt32(upTime.TotalSeconds);
         }
 
         public static long GetDiskTotalSize()
