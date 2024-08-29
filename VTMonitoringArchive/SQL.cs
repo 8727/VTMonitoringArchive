@@ -66,7 +66,7 @@ namespace VTMonitoringArchive
         public static UInt32 UnprocessedViolationsSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS where PROCESSED = 0";
-            object response = SQLQuery(sqlQuery) ?? "-2";
+            object response = SQLQuery(sqlQuery) ?? 0;
             return DateTimeToSecondes(response.ToString());
         }
 
