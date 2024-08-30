@@ -63,6 +63,13 @@ namespace VTMonitoringArchive
             return Convert.ToUInt32(SQLQuery(sqlQuery));
         }
 
+        public static void ResetUnprocessedViolations()
+        {
+            string sqlQuery = "UPDATE dbo.CARS SET PROCESSED = 1 WHERE PROCESSED = 0 AND DETECTEDGRN = ''";
+            _ = SQLQuery(sqlQuery);
+            
+        }
+
         public static UInt32 UnprocessedViolationsSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS where PROCESSED = 0";

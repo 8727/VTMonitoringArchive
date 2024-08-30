@@ -56,6 +56,8 @@ namespace VTMonitoringArchive
 
         public static void OnHostStatusTimer(Object source, ElapsedEventArgs e)
         {
+            SQL.ResetUnprocessedViolations();
+
             Service.StatusJson["UpTime"] = Request.GetUpTime().ToString();
             TimeSpan uptime = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["UpTime"]));
             Logs.WriteLine($"Host uptime {uptime}.");
