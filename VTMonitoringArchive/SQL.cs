@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 
 namespace VTMonitoringArchive
@@ -133,5 +135,56 @@ namespace VTMonitoringArchive
             return SQLQuery(sqlQuery).ToString();
         }
 
+        public static bool CheckForPastAndFuture()
+        {
+            bool status = false;
+            String getDateTime = DateTime.Now.AddDays(+1).ToString("d.M.yyyy 00:00:00");
+            DateTime endDateTime = DateTime.ParseExact(getDateTime, "d.M.yyyy H:mm:ss", System.Globalization.CultureInfo.InvariantCulture).Add(-Service.localZone);
+            DateTime startDateTime = endDateTime.AddDays(-365);
+
+            string sqlSelectInformation = $"SELECT COUNT_BIG(CARS_ID) FROM AVTO.dbo.CARS_INFORMATION where CHECKTIME < '{startDateTime:s}' OR  CHECKTIME > '{endDateTime:s}'";
+
+            if ((int)SQLQuery(sqlSelectInformation) > 0)
+            {
+                status = true;
+            }
+
+            return status;
+        }
+
+        public static void RemovalOfPastAndFuture()
+        {
+            String getDateTime = DateTime.Now.AddDays(+1).ToString("d.M.yyyy 00:00:00");
+            DateTime endDateTime = DateTime.ParseExact(getDateTime, "d.M.yyyy H:mm:ss", System.Globalization.CultureInfo.InvariantCulture).Add(-Service.localZone);
+            DateTime startDateTime = endDateTime.AddDays(-365);
+
+            string sqlDeleteCars = $"DELETE FROM AVTO.dbo.CARS where CHECKTIME < '{startDateTime:s}' OR  CHECKTIME > '{endDateTime:s}'";
+            string sqlDeleteViolations = $"DELETE FROM AVTO.dbo.CARS_VIOLATIONS where CHECKTIME < '{startDateTime:s}' OR  CHECKTIME > '{endDateTime:s}'";
+            string sqlDeletePartitions = $"DELETE FROM AVTO.dbo.PARTITIONS_NOW where DATEFROM < '{startDateTime:s}' OR  DATEFROM > '{endDateTime:s}'";
+            string sqlUpdateCars = $"UPDATE AVTO.dbo.CARS SET PROCESSED = NULL WHERE PROCESSED = 0";
+            string sqlSelectInformation = $"SELECT SCREENSHOT FROM AVTO.dbo.CARS_INFORMATION where CHECKTIME < '{startDateTime:s}' OR  CHECKTIME > '{endDateTime:s}'";
+            string sqlDeleteInformation = $"DELETE FROM AVTO.dbo.CARS_INFORMATION where CHECKTIME < '{startDateTime:s}' OR CHECKTIME > '{endDateTime:s}'";
+
+            SQLQuery(sqlDeleteCars);
+            SQLQuery(sqlDeleteViolations);
+            SQLQuery(sqlDeletePartitions);
+            SQLQuery(sqlUpdateCars);
+            SqlDataReader RemovingFiles = (SqlDataReader)SQLQuery(sqlSelectInformation);
+            if (RemovingFiles.HasRows)
+            {
+                while (RemovingFiles.Read())
+                {
+                    try
+                    {
+                        Directory.Delete(RemovingFiles.GetString(0), true);
+                    }
+                    catch (DirectoryNotFoundException ex)
+                    {
+                    }
+                }
+            }
+
+            SQLQuery(sqlDeleteInformation);
+        }
     }
 }

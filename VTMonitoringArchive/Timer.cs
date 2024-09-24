@@ -58,6 +58,11 @@ namespace VTMonitoringArchive
         {
             SQL.ResetUnprocessedViolations();
 
+            if (SQL.CheckForPastAndFuture())
+            {
+                SQL.RemovalOfPastAndFuture();
+            }
+
             Service.StatusJson["UpTime"] = Request.GetUpTime().ToString();
             TimeSpan uptime = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["UpTime"]));
             Logs.WriteLine($"Host uptime {uptime}.");
