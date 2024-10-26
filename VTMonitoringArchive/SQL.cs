@@ -117,11 +117,11 @@ namespace VTMonitoringArchive
             StringBuilder sb = new StringBuilder(Service.violations.Length);
             foreach (string violation in Service.violations)
             {
-                sb.Append(violation.Replace(" ", "") + " = 1 AND ");
+                sb.Append(violation.Replace(" ", "") + " = 1 OR ");
             }
-            string alarm = sb.ToString();
+            string alarm = sb.ToString().Remove(sb.Length - 4);
 
-            string sqlQuery = $"SELECT COUNT_BIG(CARS_ID) FROM AVTO.dbo.CARS_VIOLATIONS WHERE {alarm} CHECKTIME > '{startDateTime:s}' AND CHECKTIME < '{endDateTime:s}'";
+            string sqlQuery = $"SELECT COUNT_BIG(CARS_ID) FROM AVTO.dbo.CARS_VIOLATIONS WHERE CHECKTIME > '{startDateTime:s}' AND CHECKTIME < '{endDateTime:s}' AND ({alarm})";
             return SQLQuery(sqlQuery).ToString();
         }
 
