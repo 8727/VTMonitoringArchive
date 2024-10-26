@@ -37,7 +37,9 @@ namespace VTMonitoringArchive
         {
             var HttpResponse = serverWeb.EndGetContext(result);
             //string key = HttpResponse.Request.QueryString["key"];
-            string json = "{\n\t\"dateTime\":\"" + DateTime.Now.ToString() + "\"";
+            string json = "{\n\t\"version\":\"" + Service.version + "\"";
+
+            json += ",\n\t\"dateTime\":\"" + DateTime.Now.ToString() + "\"";
 
             json += ",\n\t\"upTime\":\"" + Service.StatusJson["UpTime"] + "\"";
 

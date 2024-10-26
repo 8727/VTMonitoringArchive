@@ -9,6 +9,8 @@ namespace VTMonitoringArchive
 {
     public partial class Service : ServiceBase
     {
+        public static string version = "1.3";
+
         public Service()
         {
             InitializeComponent();
