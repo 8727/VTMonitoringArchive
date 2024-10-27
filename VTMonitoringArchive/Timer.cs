@@ -60,9 +60,9 @@ namespace VTMonitoringArchive
 
             if (SQL.CheckForPastAndFuture())
             {
-                SQL.RemovalOfPastAndFuture();
+//                SQL.RemovalOfPastAndFuture();
             }
-
+            
             Service.StatusJson["UpTime"] = Request.GetUpTime().ToString();
             TimeSpan uptime = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["UpTime"]));
             Logs.WriteLine($"Host uptime {uptime}.");
@@ -86,13 +86,13 @@ namespace VTMonitoringArchive
             Service.StatusJson["ArchiveDepthCount"] = SQL.ArchiveDepthCount();
             TimeSpan depthSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["ArchiveDepthSeconds"]));
             Logs.WriteLine($"Storage depth: time {depthSeconds}, number {Service.StatusJson["ArchiveDepthCount"]}.");
-//-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
 
             UInt32 seconds = SQL.LastReplicationSeconds();
             Service.StatusJson["LastReplicationSeconds"] = seconds.ToString();
             TimeSpan replicationSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["LastReplicationSeconds"]));
             Logs.WriteLine($"Replication delay {replicationSeconds}.");
-//-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
 
             UInt32 count = SQL.UnprocessedViolationsCount();
             UInt32 secondsViolarion = SQL.UnprocessedViolationsSeconds();
@@ -101,7 +101,7 @@ namespace VTMonitoringArchive
             Service.StatusJson["UnprocessedViolationsSeconds"] = secondsViolarion.ToString();
             TimeSpan timeViolationsSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["UnprocessedViolationsSeconds"]));
             Logs.WriteLine($"The delay in processing results is {timeViolationsSeconds}, in the amount of {count}.");
-//-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
 
             UInt32 countexp = SQL.UnexportedCount();
             UInt32 secondsexp = SQL.UnexportedSeconds();
@@ -110,11 +110,11 @@ namespace VTMonitoringArchive
             Service.StatusJson["UnexportedSeconds"] = secondsexp.ToString();
             TimeSpan timeExportSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["UnexportedSeconds"]));
             Logs.WriteLine($"The last violation was exported {timeExportSeconds} ago, leaving {countexp} to export.");
-//-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
 
             Service.StatusJson["AllViolationsPrevioushour"] = SQL.AllViolationsPrevioushour();
             Logs.WriteLine($"All violations previoushour {Service.StatusJson["AllViolationsPrevioushour"]}.");
-//-------------------------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------------------------
             Logs.WriteLine("-------------------------------------------------------------------------------");
         }
     }

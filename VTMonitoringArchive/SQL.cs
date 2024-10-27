@@ -144,7 +144,7 @@ namespace VTMonitoringArchive
 
             string sqlSelectInformation = $"SELECT COUNT_BIG(CARS_ID) FROM AVTO.dbo.CARS_INFORMATION where CHECKTIME < '{startDateTime:s}' OR  CHECKTIME > '{endDateTime:s}'";
 
-            if ((int)SQLQuery(sqlSelectInformation) > 0)
+            if (SQLQuery(sqlSelectInformation).ToString() != "0")
             {
                 status = true;
             }
@@ -178,7 +178,7 @@ namespace VTMonitoringArchive
                     {
                         Directory.Delete(RemovingFiles.GetString(0), true);
                     }
-                    catch (DirectoryNotFoundException ex)
+                    catch (DirectoryNotFoundException)
                     {
                     }
                 }

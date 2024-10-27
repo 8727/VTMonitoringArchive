@@ -9,46 +9,44 @@ namespace VTMonitoringArchive
 {
     internal class Logs
     {
-        static int logFileName = 0;
-
         static public void WriteLine(string message)
         {
-            if (!(Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log")))
+            if (!(Directory.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\logs")))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log");
+                Directory.CreateDirectory(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\logs");
             }
 
-            string logDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\log";
+            string logDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\logs";
 
-            string[] tempfiles = Directory.GetFiles(logDir, "-log.txt", SearchOption.AllDirectories);
+            String[] files = Directory.GetFiles(logDir).OrderByDescending(d => new FileInfo(d).CreationTime).ToArray();
 
-            if (tempfiles.Count() != 0)
+            string file = logDir + "\\000000.log";
+            if (files.Length > 0)
             {
-                foreach (string file in tempfiles)
+                file = files[0];
+            }
+
+            FileInfo fileInfo = new FileInfo(file);
+            if (fileInfo.Exists)
+            {
+                if (fileInfo.Length > 204800)
                 {
                     string names = Path.GetFileName(file);
-                    Regex regex = new Regex(@"\d{4}-");
+                    Regex regex = new Regex(@"\d{6}");
                     if (regex.IsMatch(names))
                     {
-                        int number = (int.Parse(names.Remove(names.IndexOf("-"))));
-                        if (number > logFileName)
-                        {
-                            logFileName = number;
-                        }
+                        int number = (int.Parse(names.Remove(names.IndexOf("."))));
+                        number++;
+                        string name = number.ToString("000000");
+                        file = logDir + $"\\{name}.log";
                     }
                 }
             }
-
-            string name = logFileName.ToString("0000");
-            FileInfo fileInfo = new FileInfo(logDir + $"\\{name}-log.txt");
+            fileInfo = new FileInfo(file);
             using (StreamWriter sw = fileInfo.AppendText())
             {
                 sw.WriteLine(String.Format("{0:yyMMdd hh:mm:ss} {1}", DateTime.Now.ToString(), message));
                 sw.Close();
-                if (fileInfo.Length > 204800)
-                {
-                    logFileName++;
-                }
 
                 string[] delTimefiles = Directory.GetFiles(logDir, "*", SearchOption.AllDirectories);
                 foreach (string delTimefile in delTimefiles)
