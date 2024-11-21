@@ -177,6 +177,7 @@ namespace VTMonitoringArchive
             Sorting.HashVuolation();
             CreatedStatusJson();
             Web.WEBServer.Start();
+            Sorting.OnSorting();
         }
 
         protected override void OnStop()

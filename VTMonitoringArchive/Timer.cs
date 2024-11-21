@@ -20,34 +20,34 @@ namespace VTMonitoringArchive
 
         public static void OnStatusTimer(Object source, ElapsedEventArgs e) 
         {
+            if (replicator && Convert.ToUInt32(Service.StatusJson["LastReplicationSeconds"]) > 10800)
+            {
+                Request.RebootHost("Replicator");
+            }
             if (!replicator && Convert.ToUInt32(Service.StatusJson["LastReplicationSeconds"]) > 3600)
             {
                 replicator = true;
                 Request.ReStartService("VTTrafficReplicator");
             }
-            if (replicator && Convert.ToUInt32(Service.StatusJson["LastReplicationSeconds"]) > 10800)
-            {
-                Request.RebootHost("Replicator");
-            }
 
+            if (violation && Convert.ToUInt32(Service.StatusJson["UnprocessedViolationsSeconds"]) > 10800)
+            {
+                Request.RebootHost("Violations");
+            }
             if (!violation && Convert.ToUInt32(Service.StatusJson["UnprocessedViolationsSeconds"]) > 3600)
             {
                 violation = true;
                 Request.ReStartService("VTViolations");
             }
-            if (violation && Convert.ToUInt32(Service.StatusJson["UnprocessedViolationsSeconds"]) > 10800)
-            {
-                Request.RebootHost("Violations");
-            }
 
+            if (export && Convert.ToUInt32(Service.StatusJson["UnexportedCount"]) != 0 && Convert.ToUInt32(Service.StatusJson["UnexportedSeconds"]) > 21600)
+            {
+                Request.RebootHost("Export");
+            }
             if (!export && Convert.ToUInt32(Service.StatusJson["UnexportedSeconds"]) > 3600)
             {
                 export = true;
                 Request.ReStartService("VTTrafficExport");
-            }
-            if (export && Convert.ToUInt32(Service.StatusJson["UnexportedCount"]) != 0 && Convert.ToUInt32(Service.StatusJson["UnexportedSeconds"]) > 21600)
-            {
-                Request.RebootHost("Export");
             }
         } 
 

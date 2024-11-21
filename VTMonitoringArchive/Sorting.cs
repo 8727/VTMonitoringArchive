@@ -4,6 +4,7 @@ using System.Xml;
 using System.Timers;
 using System.Collections;
 using System.Linq;
+using System.Threading;
 
 namespace VTMonitoringArchive
 {
@@ -32,11 +33,22 @@ namespace VTMonitoringArchive
 
         public static void OnSortingTimer(Object source, ElapsedEventArgs e)
         {
-            if (!Service.sortingJob) {
-                Service.sortingJob = true;
-                SortingFiles(Service.sourceFolderPr, Service.sortingFolderPr);
-                SortingFiles(Service.sourceFolderSc, Service.sortingFolderSc);
-                Service.sortingJob = false;
+            OnSorting();
+        }
+
+        public static void OnSorting()
+        {
+            if (!Service.sortingJob)
+            {
+                new Thread(() => { 
+                    Logs.WriteLine($">>>>>>>> Sorting Start");
+                    Service.sortingJob = true;
+                    SortingFiles(Service.sourceFolderPr, Service.sortingFolderPr);
+                    SortingFiles(Service.sourceFolderSc, Service.sortingFolderSc);
+                    Service.sortingJob = false;
+                    Logs.WriteLine($">>>>>>>> Sorting Stop");
+                    Logs.WriteLine("-------------------------------------------------------------------------------");
+                }).Start();
             }
         }
 
@@ -49,68 +61,76 @@ namespace VTMonitoringArchive
                 string[] files = Directory.EnumerateFiles(sourcePath, "*.xml", SearchOption.AllDirectories).Take(Service.packageSize).ToArray();
 
                 int countFiles = files.Length;
+
                 if (countFiles > 0) { Timer.export = false; }
                 foreach (var file in files)
                 {
                     string name = Path.GetFileName(file);
                     string PathSour = file.Remove(file.LastIndexOf("\\"));
                     string nameRemote = name.Remove(name.LastIndexOf("_"));
-                    xFile.Load(file);
-                    if (xFile.SelectSingleNode("//v_photo_ts") != null)
+
+                    try
                     {
-                        XmlNodeList violation_time = xFile.GetElementsByTagName("v_time_check");
-                        string data = violation_time[0].InnerText.Remove(violation_time[0].InnerText.IndexOf("T"));
-                        XmlNodeList violation_camera = xFile.GetElementsByTagName("v_camera");
-                        XmlNodeList violation_pr_viol = xFile.GetElementsByTagName("v_pr_viol");
+                        xFile.Load(file);
 
-                        string Path = outPath + "\\" + data + "\\" + (string)ViolationCode[violation_pr_viol[0].InnerText] + "\\" + violation_camera[0].InnerText + "\\";
-
-                        Console.WriteLine(PathSour);
-
-                        if (!(Directory.Exists(Path)))
+                        if (xFile.SelectSingleNode("//v_photo_ts") != null)
                         {
-                            Directory.CreateDirectory(Path);
-                        }
+                            XmlNodeList violation_time = xFile.GetElementsByTagName("v_time_check");
+                            string data = violation_time[0].InnerText.Remove(violation_time[0].InnerText.IndexOf("T"));
+                            XmlNodeList violation_camera = xFile.GetElementsByTagName("v_camera");
+                            XmlNodeList violation_pr_viol = xFile.GetElementsByTagName("v_pr_viol");
 
-                        if (Service.storageXML)
-                        {
-                            File.Copy(file, (Path + name), true);
-                        }
+                            string Path = outPath + "\\" + data + "\\" + (string)ViolationCode[violation_pr_viol[0].InnerText] + "\\" + violation_camera[0].InnerText + "\\";
 
-                        if (Service.storageСollage && File.Exists(PathSour + "\\" + nameRemote + "_car.jpg"))
-                        {
-                            File.Copy((PathSour + "\\" + nameRemote + "_car.jpg"), (Path + nameRemote + "_car.jpg"), true);
-                        }
+                            if (!(Directory.Exists(Path)))
+                            {
+                                Directory.CreateDirectory(Path);
+                            }
 
-                        if (Service.storageVideo && File.Exists(PathSour + "\\" + nameRemote + "__1video.mp4"))
-                        {
-                            File.Copy((PathSour + "\\" + nameRemote + "__1video.mp4"), (Path + nameRemote + "__1video.mp4"), true);
-                        }
+                            if (Service.storageXML)
+                            {
+                                File.Copy(file, (Path + name), true);
+                            }
 
-                        if (Service.storageVideo && File.Exists(PathSour + "\\" + nameRemote + "__2video.mp4"))
-                        {
-                            File.Copy((PathSour + "\\" + nameRemote + "__2video.mp4"), (Path + nameRemote + "__2video.mp4"), true);
-                        }
+                            if (Service.storageСollage && File.Exists(PathSour + "\\" + nameRemote + "_car.jpg"))
+                            {
+                                File.Copy((PathSour + "\\" + nameRemote + "_car.jpg"), (Path + nameRemote + "_car.jpg"), true);
+                            }
 
-                        string[] delFiles = Directory.GetFiles(sourcePath, (nameRemote + "*"), SearchOption.AllDirectories);
-                        foreach (string delFile in delFiles)
-                        {
-                            File.Delete(delFile);
-                        }
+                            if (Service.storageVideo && File.Exists(PathSour + "\\" + nameRemote + "__1video.mp4"))
+                            {
+                                File.Copy((PathSour + "\\" + nameRemote + "__1video.mp4"), (Path + nameRemote + "__1video.mp4"), true);
+                            }
 
-                        processDirectory(sourcePath);
-
-                        string[] delTimefiles = Directory.GetFiles(outPath, "*", SearchOption.AllDirectories);
-                        foreach (string delTimefile in delTimefiles)
-                        {
-                            FileInfo fi = new FileInfo(delTimefile);
-                            if (fi.CreationTime < DateTime.Now.AddDays(-Service.storageDays)) { fi.Delete(); }
+                            if (Service.storageVideo && File.Exists(PathSour + "\\" + nameRemote + "__2video.mp4"))
+                            {
+                                File.Copy((PathSour + "\\" + nameRemote + "__2video.mp4"), (Path + nameRemote + "__2video.mp4"), true);
+                            }
                         }
-                        processDirectory(outPath);
+                    }
+                    catch 
+                    {
+                        
+                        Logs.WriteLine($">>>>>>>> Broken file {name}");
+                    }
+
+                    string[] delFiles = Directory.GetFiles(sourcePath, (nameRemote + "*"), SearchOption.AllDirectories);
+                    foreach (string delFile in delFiles)
+                    {
+                        File.Delete(delFile);
                     }
                 }
+                processDirectory(sourcePath);
+
+                string[] delTimefiles = Directory.GetFiles(outPath, "*", SearchOption.AllDirectories);
+                foreach (string delTimefile in delTimefiles)
+                {
+                    FileInfo fi = new FileInfo(delTimefile);
+                    if (fi.CreationTime < DateTime.Now.AddDays(-Service.storageDays)) { fi.Delete(); }
+                }
+                processDirectory(outPath);
+
                 Logs.WriteLine($">>>>>>>> Sorted {countFiles} violations");
-                Logs.WriteLine("-------------------------------------------------------------------------------");
             }
         }
 
