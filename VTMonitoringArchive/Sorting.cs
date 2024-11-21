@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Timers;
 using System.Collections;
+using System.Linq;
 
 namespace VTMonitoringArchive
 {
@@ -40,7 +41,9 @@ namespace VTMonitoringArchive
             if (Directory.Exists(sourcePath))
             {
                 XmlDocument xFile = new XmlDocument();
-                string[] files = Directory.GetFiles(sourcePath, "*.xml", SearchOption.AllDirectories);
+                //string[] files = Directory.GetFiles(sourcePath, "*.xml", SearchOption.AllDirectories);
+                string[] files = Directory.EnumerateFiles(sourcePath, "*.xml", SearchOption.AllDirectories).Take(Service.packageSize).ToArray();
+
                 int countFiles = files.Length;
                 if (countFiles > 0) { Timer.export = false; }
                 foreach (var file in files)

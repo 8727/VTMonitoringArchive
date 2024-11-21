@@ -41,14 +41,20 @@ namespace VTMonitoringArchive
             Logs.WriteLine($">>>> Service {serviceName} status >>>> {service.Status} <<<<");
         }
 
-        public static void RebootHost()
+        public static void RebootHost(string serviceName)
         {
-            //Logs.WriteLine($"***** Reboot *****");
-            var cmd = new ProcessStartInfo("shutdown.exe", "-r -t 5");
-            cmd.CreateNoWindow = true;
-            cmd.UseShellExecute = false;
-            cmd.ErrorDialog = false;
-            Process.Start(cmd);
+            if (Service.rebootHost)
+            {
+                if (DateTime.Now.Subtract(Service.lastRreboot).TotalHours > Service.rebootNoMoreOftenThanHours)
+                {
+                    Logs.WriteLine($"***** Reboot {serviceName} *****");
+                    var cmd = new ProcessStartInfo("shutdown.exe", "-r -t 5");
+                    cmd.CreateNoWindow = true;
+                    cmd.UseShellExecute = false;
+                    cmd.ErrorDialog = false;
+                    Process.Start(cmd);
+                }
+            }
         }
 
         public static byte GetPing(string ip)

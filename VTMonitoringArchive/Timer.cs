@@ -27,8 +27,7 @@ namespace VTMonitoringArchive
             }
             if (replicator && Convert.ToUInt32(Service.StatusJson["LastReplicationSeconds"]) > 10800)
             {
-                Logs.WriteLine($"***** Reboot Replicator *****");
-                Request.RebootHost();
+                Request.RebootHost("Replicator");
             }
 
             if (!violation && Convert.ToUInt32(Service.StatusJson["UnprocessedViolationsSeconds"]) > 3600)
@@ -38,8 +37,7 @@ namespace VTMonitoringArchive
             }
             if (violation && Convert.ToUInt32(Service.StatusJson["UnprocessedViolationsSeconds"]) > 10800)
             {
-                Logs.WriteLine($"***** Reboot Violations *****");
-                Request.RebootHost();
+                Request.RebootHost("Violations");
             }
 
             if (!export && Convert.ToUInt32(Service.StatusJson["UnexportedSeconds"]) > 3600)
@@ -49,8 +47,7 @@ namespace VTMonitoringArchive
             }
             if (export && Convert.ToUInt32(Service.StatusJson["UnexportedCount"]) != 0 && Convert.ToUInt32(Service.StatusJson["UnexportedSeconds"]) > 21600)
             {
-                Logs.WriteLine($"***** Reboot Export *****");
-                Request.RebootHost();
+                Request.RebootHost("Export");
             }
         } 
 

@@ -9,7 +9,7 @@ namespace VTMonitoringArchive
 {
     public partial class Service : ServiceBase
     {
-        public static string version = "1.3";
+        public static string version = "1.4";
 
         public Service()
         {
@@ -26,6 +26,7 @@ namespace VTMonitoringArchive
         public static string sortingFolderSc = "D:\\!Doris";
 
         public static bool sortingViolations = true;
+        public static int packageSize = 100;
         public static int storageDays = 35;
         public static int storageSortingIntervalMinutes = 20;
         public static bool storageXML = true;
@@ -33,7 +34,12 @@ namespace VTMonitoringArchive
         public static bool storageVideo = false;
         
         public static string networkMonitoring = "Ethernet";
+
         public static int dataUpdateInterval = 5;
+
+        public static bool rebootHost = true;
+        public static int rebootNoMoreOftenThanHours = 6;
+        public static DateTime lastRreboot = DateTime.Now;
 
         public static string monitoringOfUnloadings = "EXPORT2";
 
@@ -67,6 +73,7 @@ namespace VTMonitoringArchive
                 sortingFolderSc = ConfigurationManager.AppSettings["SortingFolderSc"];
 
                 sortingViolations = Convert.ToBoolean(ConfigurationManager.AppSettings["SortingViolations"]);
+                packageSize = Convert.ToInt32(ConfigurationManager.AppSettings["PackageSize"]);
                 storageDays = Convert.ToInt32(ConfigurationManager.AppSettings["StorageDays"]);
                 storageSortingIntervalMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["SortingIntervalMinutes"]);
                 storageXML = Convert.ToBoolean(ConfigurationManager.AppSettings["StorageXML"]);
@@ -77,6 +84,9 @@ namespace VTMonitoringArchive
                 dataUpdateInterval = Convert.ToInt32(ConfigurationManager.AppSettings["DataUpdateIntervalMinutes"]);
 
                 monitoringOfUnloadings = ConfigurationManager.AppSettings["MonitoringOfUnloadings"];
+
+                rebootHost = Convert.ToBoolean(ConfigurationManager.AppSettings["RebootHost"]);
+                rebootNoMoreOftenThanHours = Convert.ToInt32(ConfigurationManager.AppSettings["RebootNoMoreOftenThanHours"]);
 
                 sqlSource = ConfigurationManager.AppSettings["SQLDataSource"];
                 sqlUser = ConfigurationManager.AppSettings["SQLUser"];
