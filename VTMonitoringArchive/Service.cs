@@ -26,6 +26,7 @@ namespace VTMonitoringArchive
         public static string sortingFolderSc = "D:\\!Doris";
 
         public static bool sortingViolations = true;
+        public static bool sortingJob = false;
         public static int packageSize = 100;
         public static int storageDays = 35;
         public static int storageSortingIntervalMinutes = 20;

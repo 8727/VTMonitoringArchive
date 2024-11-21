@@ -32,8 +32,12 @@ namespace VTMonitoringArchive
 
         public static void OnSortingTimer(Object source, ElapsedEventArgs e)
         {
-            SortingFiles(Service.sourceFolderPr, Service.sortingFolderPr);
-            SortingFiles(Service.sourceFolderSc, Service.sortingFolderSc);
+            if (!Service.sortingJob) {
+                Service.sortingJob = true;
+                SortingFiles(Service.sourceFolderPr, Service.sortingFolderPr);
+                SortingFiles(Service.sourceFolderSc, Service.sortingFolderSc);
+                Service.sortingJob = false;
+            }
         }
 
         static void SortingFiles(string sourcePath, string outPath)
