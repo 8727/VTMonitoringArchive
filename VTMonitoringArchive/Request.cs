@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.ServiceProcess;
+using System.Net.NetworkInformation;
 
 
 namespace VTMonitoringArchive

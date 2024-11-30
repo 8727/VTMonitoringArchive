@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Win32;
+using System.Collections;
 using System.Configuration;
 using System.ServiceProcess;
-using System.Collections;
-using System.Linq;
 
 namespace VTMonitoringArchive
 {
     public partial class Service : ServiceBase
     {
-        public static string version = "1.4";
+        public static string version = "1.5";
 
         public Service()
         {

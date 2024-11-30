@@ -45,7 +45,7 @@ namespace VTMonitoringArchive
             fileInfo = new FileInfo(file);
             using (StreamWriter sw = fileInfo.AppendText())
             {
-                sw.WriteLine(String.Format("{0:yyMMdd hh:mm:ss} {1}", DateTime.Now.ToString(), message));
+                sw.WriteLine(String.Format("{0} {1}", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff"), message));
                 sw.Close();
 
                 string[] delTimefiles = Directory.GetFiles(logDir, "*", SearchOption.AllDirectories);
