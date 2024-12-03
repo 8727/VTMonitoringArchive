@@ -139,10 +139,10 @@ namespace VTMonitoringArchive
         {
             StatusJson.Add("UpTime", Request.GetUpTime().ToString());
 
-            StatusJson.Add("DiskTotalSize", (Request.GetDiskTotalSize() / 1_073_741_824.0).ToString());
-            StatusJson.Add("DiskTotalFreeSpace", (Request.GetDiskTotalFreeSpace() / 1_073_741_824.0).ToString());
-            StatusJson.Add("DiskPercentTotalSize", Request.GetDiskUsagePercentage().ToString());
-            StatusJson.Add("DiskPercentTotalFreeSpace", Request.GetDiskPercentFreeSpace().ToString());
+            StatusJson.Add("DiskTotalSize", (Request.GetDiskTotalSize() / 1_073_741_824.0).ToString().Replace(",", "."));
+            StatusJson.Add("DiskTotalFreeSpace", (Request.GetDiskTotalFreeSpace() / 1_073_741_824.0).ToString().Replace(",", "."));
+            StatusJson.Add("DiskPercentTotalSize", Request.GetDiskUsagePercentage().ToString().Replace(",", "."));
+            StatusJson.Add("DiskPercentTotalFreeSpace", Request.GetDiskPercentFreeSpace().ToString().Replace(",", "."));
 
             StatusJson.Add("ArchiveDepthSeconds", SQL.ArchiveDepthSeconds());
             StatusJson.Add("ArchiveDepthCount", SQL.ArchiveDepthCount());

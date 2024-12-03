@@ -13,7 +13,18 @@ namespace VTMonitoringArchive
     {
         static DriveInfo driveInfo = new DriveInfo(Service.diskMonitoring);
 
-        public static void ReStartService(string serviceName)
+        public static void StatusNTPService()
+        {
+            ServiceController service = new ServiceController("Network Time Protocol Daemon");
+            if (service.Status == ServiceControllerStatus.Stopped)
+            {
+                Console.WriteLine($">>>> Service {"Network Time Protocol Daemon"} status >>>> {service.Status} <<<<");
+                service.Start();
+                Console.WriteLine($">>>> Service {"Network Time Protocol Daemon"} status >>>> {service.Status} <<<<");
+            }
+        }
+
+            public static void ReStartService(string serviceName)
         {
             ServiceController service = new ServiceController(serviceName);
             if (service.Status != ServiceControllerStatus.Stopped)
@@ -124,7 +135,7 @@ namespace VTMonitoringArchive
                 lastSent = ipv4Info.BytesSent;
                 speed = Convert.ToUInt16(adapter.Speed / 1000000);
             }
-            string[] req = { speed.ToString(), ((lastReceived - oldReceived) / 131072.0).ToString(), ((lastSent - oldSent) / 131072.0).ToString() };
+            string[] req = { speed.ToString(), ((lastReceived - oldReceived) / 131072.0).ToString().Replace(",", "."), ((lastSent - oldSent) / 131072.0).ToString().Replace(",", ".") };
             return req;
         }
 
