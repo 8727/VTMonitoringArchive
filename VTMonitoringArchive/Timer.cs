@@ -85,14 +85,14 @@ namespace VTMonitoringArchive
             Logs.WriteLine($"Storage depth: time {depthSeconds}, number {Service.StatusJson["ArchiveDepthCount"]}.");
             //-------------------------------------------------------------------------------------------------
 
-            UInt32 seconds = SQL.LastReplicationSeconds();
+            Int32 seconds = SQL.LastReplicationSeconds();
             Service.StatusJson["LastReplicationSeconds"] = seconds.ToString();
             TimeSpan replicationSeconds = TimeSpan.FromSeconds(Convert.ToDouble(Service.StatusJson["LastReplicationSeconds"]));
             Logs.WriteLine($"Replication delay {replicationSeconds}.");
             //-------------------------------------------------------------------------------------------------
 
             UInt32 count = SQL.UnprocessedViolationsCount();
-            UInt32 secondsViolarion = SQL.UnprocessedViolationsSeconds();
+            Int32 secondsViolarion = SQL.UnprocessedViolationsSeconds();
 
             Service.StatusJson["UnprocessedViolationsCount"] = count.ToString();
             Service.StatusJson["UnprocessedViolationsSeconds"] = secondsViolarion.ToString();
@@ -101,7 +101,7 @@ namespace VTMonitoringArchive
             //-------------------------------------------------------------------------------------------------
 
             UInt32 countexp = SQL.UnexportedCount();
-            UInt32 secondsexp = SQL.UnexportedSeconds();
+            Int32 secondsexp = SQL.UnexportedSeconds();
 
             Service.StatusJson["UnexportedCount"] = countexp.ToString();
             Service.StatusJson["UnexportedSeconds"] = secondsexp.ToString();

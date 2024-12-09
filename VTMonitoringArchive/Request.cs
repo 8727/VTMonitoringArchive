@@ -24,7 +24,7 @@ namespace VTMonitoringArchive
             }
         }
 
-            public static void ReStartService(string serviceName)
+        public static void ReStartService(string serviceName)
         {
             ServiceController service = new ServiceController(serviceName);
             if (service.Status != ServiceControllerStatus.Stopped)

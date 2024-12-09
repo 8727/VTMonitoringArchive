@@ -36,8 +36,8 @@ namespace VTMonitoringArchive
             return response;
         }
 
-        static UInt32 DateTimeToSecondes(string dt)
-        {
+        static Int32 DateTimeToSecondes(string dt)
+        { 
             if (dt == "-1" )
             {
                 dt = "01.01.2000 00:00:00";
@@ -48,10 +48,14 @@ namespace VTMonitoringArchive
             }
 
             DateTime converDateTime = DateTime.ParseExact(dt, "d.M.yyyy H:mm:ss", System.Globalization.CultureInfo.InvariantCulture).Add(+Service.localZone);
-            return Convert.ToUInt32(DateTime.Now.Subtract(converDateTime).TotalSeconds);
+            if (converDateTime > DateTime.Now)
+            {
+                Logs.WriteLine("!!!!!!!!!! Rough cars from the future.");
+            }
+            return Convert.ToInt32(DateTime.Now.Subtract(converDateTime).TotalSeconds);
         }
 
-        public static UInt32 LastReplicationSeconds()
+        public static Int32 LastReplicationSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS ORDER BY CARS_ID DESC";
             object response = SQLQuery(sqlQuery) ?? "-2";
@@ -71,7 +75,7 @@ namespace VTMonitoringArchive
             
         }
 
-        public static UInt32 UnprocessedViolationsSeconds()
+        public static Int32 UnprocessedViolationsSeconds()
         {
             string sqlQuery = "SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS where PROCESSED = 0";
             object response = SQLQuery(sqlQuery) ?? "-2";
@@ -84,7 +88,7 @@ namespace VTMonitoringArchive
             return Convert.ToUInt32(SQLQuery(sqlQuery));
         }
 
-        public static UInt32 UnexportedSeconds()
+        public static Int32 UnexportedSeconds()
         {
             string sqlQuery = $"SELECT TOP(1) CHECKTIME FROM AVTO.dbo.CARS_VIOLATIONS where {Service.monitoringOfUnloadings} = 1 ORDER BY CARS_ID DESC";
             object response = SQLQuery(sqlQuery) ?? "-2";
